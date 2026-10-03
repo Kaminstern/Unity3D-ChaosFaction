@@ -13,13 +13,14 @@ public class CtrlHuman : BaseHuman
 
         if (Input.GetMouseButtonDown(0))
         {
+            Debug.Log($"frame = {Time.frameCount}, instance={GetEntityId()}, go={gameObject.name}, time={Time.realtimeSinceStartup}");
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Physics.Raycast(ray, out hit);
             if (hit.collider.tag == "Terrain")
             {
                 MoveTo(hit.point);
-                NetManager.Send("Enter|127.0.0.1,100,200,300,45");
+                NetManager.Send($"Move|{NetManager.GetDesc()},{hit.point.x},{hit.point.y},{hit.point.z},{transform.eulerAngles}");
             }
         }
     }
