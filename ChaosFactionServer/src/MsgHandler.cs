@@ -1,0 +1,40 @@
+﻿using System.Net;
+using System.Net.Sockets;
+
+namespace ChaosFaction
+{
+    /// <summary>
+    /// 消息处理函数类
+    /// </summary>
+    class MsgHandler
+    {
+        public static void MsgEnter(ClientState state,string msgArgs)
+        {
+            // 解析参数
+            string[] split = msgArgs.Split('|');
+            string desc = split[0];
+            float x = float.Parse(split[1]);
+            float y = float.Parse(split[2]);
+            float z = float.Parse(split[3]);
+            float eulY = float.Parse(split[4]);
+            // 赋值
+            state.hp = 100;
+            state.x = x;
+            state.y = y; 
+            state.z = z;
+            state.eulY = eulY;
+            // 广播
+            string sendStr = $"Enter|{msgArgs}";
+            foreach(ClientState s in MainClass.clients.Values)
+            {
+                MainClass.Send(state, sendStr);
+            }
+            Console.WriteLine($"MsgEnter {msgArgs}");
+        }
+
+        public static void MsgList(ClientState state, string msgArgs)
+        {
+            Console.WriteLine($"MsgList {msgArgs}");
+        }
+    }
+}

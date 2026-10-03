@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 
 namespace ChaosFaction
 {
     class MainClass
     {
         static Socket listenfd;
-        static Dictionary<Socket, ClientState> clients = new Dictionary<Socket, ClientState>();
+        public static Dictionary<Socket, ClientState> clients = new Dictionary<Socket, ClientState>();
 
         public static void Main(string[] args)
         {
@@ -53,24 +54,36 @@ namespace ChaosFaction
         // Recevie回调
         public static void ReceiveCallback(IAsyncResult ar)
         {
+            ClientState state = (ClientState)ar.AsyncState;
+            Socket clientfd = state.socket;
             try
             {
-                ClientState state = (ClientState)ar.AsyncState;
-                Socket clientfd = state.socket;
                 int count = clientfd.EndReceive(ar);
 
                 // 客户端关闭
                 if (count == 0)
                 {
+                    MethodInfo mei = typeof(EventHandler).GetMethod("Disconnect");
+                    object[] ob = { state };
+                    mei.Invoke(null, ob);
+
                     clientfd.Close();
                     clients.Remove(clientfd);
                     Console.WriteLine("Socket close");
                     return;
                 }
 
-                // 广播
                 string recvStr = System.Text.Encoding.Default.GetString(state.readBuff, 0, count);
+                string[] splits = recvStr.Split('|');
                 Console.WriteLine($"Receive {recvStr}");
+                string msgName = splits[0];
+                string msgArgs = splits[1];
+                string funName = $"Msg{msgName}";
+                MethodInfo mi = typeof(MsgHandler).GetMethod(funName);
+                object[] o = { state, msgArgs };
+                mi.Invoke(null, o);
+
+                // 广播
                 string sendStr = recvStr;
                 byte[] sendBytes = System.Text.Encoding.Default.GetBytes(sendStr);
                 foreach (ClientState cs in clients.Values)
@@ -81,8 +94,19 @@ namespace ChaosFaction
             }
             catch (SocketException ex)
             {
+                MethodInfo mei = typeof(EventHandler).GetMethod("Disconnect");
+                object[] ob = { state };
+                mei.Invoke(null, ob);
                 Console.WriteLine($"Socket Receive fail {ex.Message}");
             }
+        }
+
+        public static void Send(ClientState sc, string sendStr)
+        {
+            Socket socket = sc.socket;
+            if (socket == null || !socket.Connected) { return; }
+            byte[] sendBytes = System.Text.Encoding.Default.GetBytes(sendStr);
+            socket.Send(sendBytes);
         }
     }
 }
