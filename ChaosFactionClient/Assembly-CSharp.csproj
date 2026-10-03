@@ -54,8 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CtrlHuman.cs" />
+    <Compile Include="Assets\Scripts\NetManager.cs" />
     <Compile Include="Assets\Scripts\BaseHuman.cs" />
     <Compile Include="Assets\Scripts\SyncHuman.cs" />
+    <Compile Include="Assets\Scripts\Main.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

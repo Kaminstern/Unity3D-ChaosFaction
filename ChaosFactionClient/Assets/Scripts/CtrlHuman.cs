@@ -19,6 +19,7 @@ public class CtrlHuman : BaseHuman
             if (hit.collider.tag == "Terrain")
             {
                 MoveTo(hit.point);
+                NetManager.Send("Enter|127.0.0.1,100,200,300,45");
             }
         }
     }

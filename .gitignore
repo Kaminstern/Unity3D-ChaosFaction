@@ -11,12 +11,12 @@
 /ChaosFactionClient/.vscode/
 
 
-/ChaoFactionServer/src/obj
-/ChaoFactionServer/src/bin
+/ChaosFactionServer/src/obj
+/ChaosFactionServer/src/bin
 
-/ChaoFactionServer/.vsconfig
-/ChaoFactionServer/.vs/
-/ChaoFactionServer/.vscode/
+/ChaosFactionServer/.vsconfig
+/ChaosFactionServer/.vs/
+/ChaosFactionServer/.vscode/
 
 
 
