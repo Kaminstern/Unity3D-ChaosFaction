@@ -52,6 +52,29 @@ public class CtrlHuman : BaseHuman
                 sendStr += "|";     // 重新定义了协议，末尾以|作为分隔，防止粘包
 
                 NetManager.Send(sendStr);
+
+                // 攻击判定
+                Vector3 lineEnd = transform.position + 0.5f * Vector3.up;
+                Vector3 lineStart = lineEnd + 20 * transform.forward;
+                if(Physics.Linecast(lineStart, lineEnd ,out hit))
+                {
+                    GameObject hitGo = hit.collider.gameObject;
+                    if(hitGo == gameObject)
+                    {
+                        return;
+                    }
+                    SyncHuman h = hitGo.GetComponent<SyncHuman>();
+                    if(h == null)
+                    {
+                        return;
+                    }
+                    sendStr = "Hit|";
+                    sendStr += $"{NetManager.GetDesc()},";      // 攻击者
+                    sendStr += $"{h.desc},";                    // 受击者
+
+                    sendStr += "|";     // 重新定义了协议，末尾以|作为分隔，防止粘包
+                    NetManager.Send(sendStr);
+                }
             }
         }
     }

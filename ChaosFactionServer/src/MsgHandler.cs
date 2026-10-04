@@ -80,5 +80,41 @@ namespace ChaosFaction
                 MainClass.Send(cs, sendStr);
             }
         }
+
+        public static void MsgHit(ClientState c, string msgArgs)
+        {
+            // 解析参数
+            string[] split = msgArgs.Split(',');
+            string attDesc = split[0];
+            string hitDesc = split[1];
+            // 找出被攻击的对象
+            ClientState hitCs = null;
+            foreach(ClientState cs in MainClass.clients.Values)
+            {
+                if(cs.socket.RemoteEndPoint.ToString() == hitDesc)
+                {
+                    hitCs = cs;
+                    break;
+                }
+            }
+            if(hitCs == null)
+            {
+                return;
+            }
+            // 扣血
+            hitCs.hp -= 25;
+            // 判定死亡
+            if(hitCs.hp <= 0)
+            {
+                string sendStr = $"Die|{hitCs.socket.RemoteEndPoint.ToString()}";
+
+                sendStr += "|";     // 重新定义了协议，末尾以|作为分隔，防止粘包
+
+                foreach (ClientState cs in MainClass.clients.Values)
+                {
+                    MainClass.Send(cs, sendStr);
+                }
+            }
+        }
     }
 }
