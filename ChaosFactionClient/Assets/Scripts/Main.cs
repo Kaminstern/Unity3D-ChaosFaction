@@ -20,6 +20,7 @@ public class Main : MonoBehaviour
         NetManager.AddListener("Move", OnMove);
         NetManager.AddListener("Leave", OnLeave);
         NetManager.AddListener("List", OnList);
+        NetManager.AddListener("Attack", OnAttack);
         NetManager.Connect("127.0.0.1", 8888);
 
         // 添加一个角色
@@ -139,5 +140,21 @@ public class Main : MonoBehaviour
             bh.desc = desc; ;
             otherHumans.Add(desc, bh);
         }
+    }
+
+    void OnAttack(string msgArgs)
+    {
+        Debug.Log($"OnAttack {msgArgs}");
+        // 解析参数
+        string[] split = msgArgs.Split(',');
+        string desc = split[0];
+        float eulY = float.Parse(split[1]);
+        // 攻击动作
+        if(!otherHumans.ContainsKey(desc))
+        {
+            return;
+        }
+        SyncHuman h = (SyncHuman)otherHumans[desc];
+        h.SyncAttack(eulY);
     }
 }

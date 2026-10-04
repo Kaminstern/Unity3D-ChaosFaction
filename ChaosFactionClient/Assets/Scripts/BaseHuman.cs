@@ -13,6 +13,10 @@ public class BaseHuman : MonoBehaviour
     // 描述
     public string desc = "";
 
+    // 是否正在攻击
+    internal bool isAttacking = false;
+    internal float attackTime = float.MinValue;
+
     protected void Start()
     {
         animator = GetComponent<Animator>();
@@ -21,6 +25,7 @@ public class BaseHuman : MonoBehaviour
     protected void Update()
     {
         MoveUpdate();
+        AttackUpdate();
     }
 
     // 移动到某处
@@ -44,6 +49,28 @@ public class BaseHuman : MonoBehaviour
                 isMoving = false;
                 animator.SetBool("isMoving", false);
             }
+        }
+    }
+
+    // 攻击动作
+    public void Attack()
+    {
+        isAttacking = true;
+        attackTime = Time.time;
+        animator.SetBool("isAttacking", true);
+    }
+
+    // 攻击Update
+    public void AttackUpdate()
+    {
+        if (isAttacking)
+        {
+            if(Time.time - attackTime < 1.2f)
+            {
+                return;
+            }
+            isAttacking = false;
+            animator.SetBool("isAttacking", false);
         }
     }
 }

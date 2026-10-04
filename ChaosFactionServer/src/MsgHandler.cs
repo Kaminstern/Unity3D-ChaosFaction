@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Xml.Serialization;
 
 namespace ChaosFaction
 {
@@ -64,6 +65,16 @@ namespace ChaosFaction
             c.z = z;
             // 广播
             string sendStr = $"Move|{msgArgs}|";
+            foreach(ClientState cs in MainClass.clients.Values)
+            {
+                MainClass.Send(cs, sendStr);
+            }
+        }
+
+        public static void MsgAttack(ClientState c, string msgArgs)
+        {
+            // 广播
+            string sendStr = $"Attack|{msgArgs}|";
             foreach(ClientState cs in MainClass.clients.Values)
             {
                 MainClass.Send(cs, sendStr);
