@@ -99,6 +99,17 @@ public class Main : MonoBehaviour
     void OnLeave(string msg)
     {
         Debug.Log($"OnLeave {msg}");
+        // 解析参数
+        string[] split = msg.Split(",");
+        string desc = split[0];
+        // 删除
+        if (!otherHumans.ContainsKey(desc))
+        {
+            return;
+        }
+        BaseHuman h = otherHumans[desc];
+        Destroy(h.gameObject);          // 销毁h所在的整个GameObject对象
+        otherHumans.Remove(desc);
     }
 
     void OnList(string msgArgs)

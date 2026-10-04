@@ -12,6 +12,12 @@ namespace ChaosFaction
         public static void OnDisconnect(ClientState state)
         {
             Console.WriteLine($"OnDisconnect");
+            string desc = state.socket.RemoteEndPoint.ToString();
+            string sendStr = $"Leave|{desc},|";
+            foreach(ClientState cs in MainClass.clients.Values)
+            {
+                MainClass.Send(cs, sendStr);
+            }
         }
     }
 }
