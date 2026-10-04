@@ -35,6 +35,18 @@ namespace ChaosFaction
         public static void MsgList(ClientState state, string msgArgs)
         {
             Console.WriteLine($"MsgList {msgArgs}");
+            string sendStr = "List|";
+            foreach (ClientState cs in MainClass.clients.Values)     // 所有客户端的信息
+            {
+                sendStr += $"{cs.socket.RemoteEndPoint.ToString()},";
+                sendStr += $"{cs.x},";
+                sendStr += $"{cs.y},";
+                sendStr += $"{cs.z},";
+                sendStr += $"{cs.eulY},";
+                sendStr += $"{cs.hp},";
+            }
+            Console.WriteLine($"sendStr:{sendStr}");
+            MainClass.Send(state, sendStr);                     // state是需要其它客户端信息的客户端
         }
     }
 }

@@ -34,6 +34,9 @@ public class Main : MonoBehaviour
         sendStr += pos.z + ",";
         sendStr += eul.y;
         NetManager.Send(sendStr);
+
+        // 请求玩家列表
+        NetManager.Send("List|");
     }
 
     // Update is called once per frame
@@ -75,5 +78,34 @@ public class Main : MonoBehaviour
     void OnLeave(string msg)
     {
         Debug.Log($"OnLeave {msg}");
+    }
+
+    void OnList(string msgArgs)
+    {
+        Debug.Log($"OnList {msgArgs}");
+        // 解析参数
+        string[] splits = msgArgs.Split(",");
+        int entityCount = (splits.Length - 1) / 6;         // 减1是因为服务端那边是循环放置各客户端的信息，最后会有一个逗号分割
+        for (int i = 0; i < entityCount; i++)
+        {
+            string desc = splits[i*6];
+            float x = float.Parse(splits[i*6+1]);
+            float y = float.Parse(splits[i*6+2]);
+            float z = float.Parse(splits[i*6+3]);
+            float eulY = float.Parse(splits[i*6+4]);
+            int hp = int.Parse(splits[i*6+5]);
+            // 是自己
+            if(desc == NetManager.GetDesc())
+            {
+                continue;
+            }
+            // 添加一个角色
+            GameObject gameObject = (GameObject)Instantiate(humanPrefab);
+            gameObject.transform.position = new Vector3(x, y, z);
+            gameObject.transform.eulerAngles = new Vector3(0, eulY, 0);
+            BaseHuman bh = gameObject.AddComponent<SyncHuman>();
+            bh.desc = desc; ;
+            otherHumans.Add(desc, bh);
+        }
     }
 }
