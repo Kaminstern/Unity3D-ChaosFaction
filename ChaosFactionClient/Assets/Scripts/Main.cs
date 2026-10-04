@@ -38,11 +38,11 @@ public class Main : MonoBehaviour
         sendStr += pos.x + ",";
         sendStr += pos.y + ",";
         sendStr += pos.z + ",";
-        sendStr += eul.y;
+        sendStr += eul.y + "|";
         NetManager.Send(sendStr);
 
         // 请求玩家列表
-        NetManager.Send("List|");
+        NetManager.Send("List||");
     }
 
     // Update is called once per frame

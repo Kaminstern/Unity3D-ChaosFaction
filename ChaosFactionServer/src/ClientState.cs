@@ -12,6 +12,7 @@ namespace ChaosFaction
         public Socket socket;
         // 填充BeginReceive参数的读缓冲区
         public byte[] readBuff = new byte[1024];
+        public string buffer = "";      // 残留的不完整消息
         public int hp = -100;
         public float x = 0;
         public float y = 0;

@@ -24,8 +24,8 @@ namespace ChaosFaction
             state.z = z;
             state.eulY = eulY;
             // 广播
-            string sendStr = $"Enter|{msgArgs}";
-            foreach(ClientState s in MainClass.clients.Values)
+            string sendStr = $"Enter|{msgArgs}|";       // 末尾加 |，作为消息终止符
+            foreach (ClientState s in MainClass.clients.Values)
             {
                 MainClass.Send(s, sendStr);
             }
@@ -45,6 +45,7 @@ namespace ChaosFaction
                 sendStr += $"{cs.eulY},";
                 sendStr += $"{cs.hp},";
             }
+            sendStr += "|";                                  // 末尾加 |，作为消息终止符
             Console.WriteLine($"sendStr:{sendStr}");
             MainClass.Send(state, sendStr);                     // state是需要其它客户端信息的客户端
         }

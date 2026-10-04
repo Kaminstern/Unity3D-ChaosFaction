@@ -20,7 +20,7 @@ public class CtrlHuman : BaseHuman
             if (hit.collider.tag == "Terrain")
             {
                 MoveTo(hit.point);
-                NetManager.Send($"Move|{NetManager.GetDesc()},{hit.point.x},{hit.point.y},{hit.point.z},{transform.eulerAngles}");
+                NetManager.Send($"Move|{NetManager.GetDesc()},{hit.point.x},{hit.point.y},{hit.point.z},{transform.eulerAngles}|");
             }
         }
     }

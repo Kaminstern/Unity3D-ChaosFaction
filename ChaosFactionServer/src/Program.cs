@@ -74,14 +74,25 @@ namespace ChaosFaction
                 }
 
                 string recvStr = System.Text.Encoding.Default.GetString(state.readBuff, 0, count);
-                string[] splits = recvStr.Split('|');
-                Console.WriteLine($"Receive {recvStr}");
-                string msgName = splits[0];
-                string msgArgs = splits[1];
-                string funName = $"Msg{msgName}";
-                MethodInfo mi = typeof(MsgHandler).GetMethod(funName);
-                object[] o = { state, msgArgs };
-                mi.Invoke(null, o);
+                state.buffer += recvStr;
+                Console.WriteLine($"Receive [{recvStr}], buffer after add = [{state.buffer}]");
+                // 循环切出完整消息：格式 MsgName|MsgArgs|
+                while (true)
+                {
+                    int firstPipe = state.buffer.IndexOf('|');
+                    if (firstPipe < 0) break;                              // 连 MsgName 都没收全
+                    int secondPipe = state.buffer.IndexOf('|', firstPipe + 1);
+                    if (secondPipe < 0) break;                             // MsgArgs 还没收全
+
+                    string msgName = state.buffer.Substring(0, firstPipe);
+                    string msgArgs = state.buffer.Substring(firstPipe + 1, secondPipe - firstPipe - 1);
+                    state.buffer = state.buffer.Substring(secondPipe + 1);
+
+                    string funName = $"Msg{msgName}";
+                    MethodInfo mi = typeof(MsgHandler).GetMethod(funName);
+                    object[] o = { state, msgArgs };
+                    mi.Invoke(null, o);
+                }
 
                 clientfd.BeginReceive(state.readBuff, 0, 1024, 0, ReceiveCallback, state);
             }
@@ -98,6 +109,7 @@ namespace ChaosFaction
         {
             Socket socket = cs.socket;
             if (socket == null || !socket.Connected) { return; }
+            Console.WriteLine($"[Send] {sendStr}");
             byte[] sendBytes = System.Text.Encoding.Default.GetBytes(sendStr);
             socket.Send(sendBytes);
         }
