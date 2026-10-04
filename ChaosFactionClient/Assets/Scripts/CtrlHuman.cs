@@ -13,14 +13,22 @@ public class CtrlHuman : BaseHuman
 
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log($"frame = {Time.frameCount}, instance={GetEntityId()}, go={gameObject.name}, time={Time.realtimeSinceStartup}");
+            //Debug.Log($"frame = {Time.frameCount}, instance={GetEntityId()}, go={gameObject.name}, time={Time.realtimeSinceStartup}");
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Physics.Raycast(ray, out hit);
             if (hit.collider.tag == "Terrain")
             {
                 MoveTo(hit.point);
-                NetManager.Send($"Move|{NetManager.GetDesc()},{hit.point.x},{hit.point.y},{hit.point.z},{transform.eulerAngles}|");
+                // 发送协议
+                string sendStr = "Move|";
+                sendStr += $"{NetManager.GetDesc()},";
+                sendStr += $"{hit.point.x},";
+                sendStr += $"{hit.point.y},";
+                sendStr += $"{hit.point.z},";
+
+                sendStr += "|";     // 重新定义了协议，末尾以|作为分隔，防止粘包
+                NetManager.Send(sendStr);
             }
         }
     }

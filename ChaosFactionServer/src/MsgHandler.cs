@@ -8,7 +8,7 @@ namespace ChaosFaction
     /// </summary>
     class MsgHandler
     {
-        public static void MsgEnter(ClientState state,string msgArgs)
+        public static void MsgEnter(ClientState state, string msgArgs)
         {
             // 解析参数
             string[] split = msgArgs.Split(',');
@@ -20,7 +20,7 @@ namespace ChaosFaction
             // 赋值
             state.hp = 100;
             state.x = x;
-            state.y = y; 
+            state.y = y;
             state.z = z;
             state.eulY = eulY;
             // 广播
@@ -48,6 +48,26 @@ namespace ChaosFaction
             sendStr += "|";                                  // 末尾加 |，作为消息终止符
             Console.WriteLine($"sendStr:{sendStr}");
             MainClass.Send(state, sendStr);                     // state是需要其它客户端信息的客户端
+        }
+
+        public static void MsgMove(ClientState c, string msgArgs)
+        {
+            // 解析参数
+            string[] split = msgArgs.Split(',');
+            string desc = split[0];
+            float x = float.Parse(split[1]);
+            float y = float.Parse(split[2]);
+            float z = float.Parse(split[3]);
+            // 赋值
+            c.x = x;
+            c.y = y;
+            c.z = z;
+            // 广播
+            string sendStr = $"Move|{msgArgs}|";
+            foreach(ClientState cs in MainClass.clients.Values)
+            {
+                MainClass.Send(cs, sendStr);
+            }
         }
     }
 }

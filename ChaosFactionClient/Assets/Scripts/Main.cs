@@ -79,6 +79,21 @@ public class Main : MonoBehaviour
     void OnMove(string msg)
     {
         Debug.Log($"OnMove {msg}");
+        // 解析参数
+        string[] split = msg.Split(",");
+        string desc = split[0];
+        float x = float.Parse(split[1]);
+        float y = float.Parse(split[2]);
+        float z = float.Parse(split[3]);
+
+        // 移动
+        if (!otherHumans.ContainsKey(desc))
+        {
+            return;
+        }
+        BaseHuman h = otherHumans[desc];
+        Vector3 targetPos = new Vector3(x, y, z);
+        h.MoveTo(targetPos);
     }
 
     void OnLeave(string msg)
@@ -94,14 +109,14 @@ public class Main : MonoBehaviour
         int entityCount = (splits.Length - 1) / 6;         // 减1是因为服务端那边是循环放置各客户端的信息，最后会有一个逗号分割
         for (int i = 0; i < entityCount; i++)
         {
-            string desc = splits[i*6];
-            float x = float.Parse(splits[i*6+1]);
-            float y = float.Parse(splits[i*6+2]);
-            float z = float.Parse(splits[i*6+3]);
-            float eulY = float.Parse(splits[i*6+4]);
-            int hp = int.Parse(splits[i*6+5]);
+            string desc = splits[i * 6];
+            float x = float.Parse(splits[i * 6 + 1]);
+            float y = float.Parse(splits[i * 6 + 2]);
+            float z = float.Parse(splits[i * 6 + 3]);
+            float eulY = float.Parse(splits[i * 6 + 4]);
+            int hp = int.Parse(splits[i * 6 + 5]);
             // 是自己
-            if(desc == NetManager.GetDesc())
+            if (desc == NetManager.GetDesc())
             {
                 continue;
             }
