@@ -21,6 +21,7 @@ public class Main : MonoBehaviour
         NetManager.AddListener("Leave", OnLeave);
         NetManager.AddListener("List", OnList);
         NetManager.AddListener("Attack", OnAttack);
+        NetManager.AddListener("Die", OnDie);
         NetManager.Connect("127.0.0.1", 8888);
 
         // 添加一个角色
@@ -156,5 +157,26 @@ public class Main : MonoBehaviour
         }
         SyncHuman h = (SyncHuman)otherHumans[desc];
         h.SyncAttack(eulY);
+    }
+
+    void OnDie(string msgArgs)
+    {
+        Debug.Log($"OnDie {msgArgs}");
+        // 解析参数
+        string[] split = msgArgs.Split(",");
+        string hitDesc = split[0];
+        // 自己阵亡
+        if( hitDesc == NetManager.GetDesc())
+        {
+            Debug.Log("Game Over");
+            return;
+        }
+        // 死亡判定
+        if (!otherHumans.ContainsKey(hitDesc))
+        {
+            return;
+        }
+        SyncHuman h = (SyncHuman)(otherHumans[hitDesc]);
+        h.gameObject.SetActive(false);
     }
 }
