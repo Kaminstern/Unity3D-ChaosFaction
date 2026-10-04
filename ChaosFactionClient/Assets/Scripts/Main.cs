@@ -8,12 +8,18 @@ public class Main : MonoBehaviour
     // 人物列表
     public BaseHuman myHuman;
     public Dictionary<string, BaseHuman> otherHumans;
+
+    private void Awake()
+    {
+        otherHumans = new Dictionary<string, BaseHuman>();
+    }
     void Start()
     {
         // 网络模块
         NetManager.AddListener("Enter", OnEnter);
         NetManager.AddListener("Move", OnMove);
         NetManager.AddListener("Leave", OnLeave);
+        NetManager.AddListener("List", OnList);
         NetManager.Connect("127.0.0.1", 8888);
 
         // 添加一个角色
@@ -65,7 +71,7 @@ public class Main : MonoBehaviour
         GameObject gameObject = (GameObject)Instantiate(humanPrefab);
         gameObject.transform.position = new Vector3(x, y, z);
         gameObject.transform.eulerAngles = new Vector3(0, eulY, 0);
-        BaseHuman bh = gameObject.GetComponent<SyncHuman>();
+        BaseHuman bh = gameObject.AddComponent<SyncHuman>();
         bh.desc = desc; ;
         otherHumans.Add(desc, bh);
     }

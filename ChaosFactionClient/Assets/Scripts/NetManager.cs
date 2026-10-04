@@ -26,8 +26,8 @@ public static class NetManager
     // 获取描述
     public static string GetDesc()
     {
-        if(socket == null) { return ""; }
-        if(!socket.Connected) { return ""; }
+        if (socket == null) { return ""; }
+        if (!socket.Connected) { return ""; }
         return socket.LocalEndPoint.ToString();
     }
 
@@ -47,13 +47,13 @@ public static class NetManager
     {
         try
         {
-            Socket socket = (Socket)ar.AsyncState;
-            int count = socket.EndReceive(ar);
+            Socket s = (Socket)ar.AsyncState;
+            int count = s.EndReceive(ar);
             string recvStr = System.Text.Encoding.Default.GetString(readBuff, 0, count);
             msgList.Add(recvStr);
-            socket.BeginReceive(readBuff, 0, 1024, 0, ReceiveCallback, socket);
+            s.BeginReceive(readBuff, 0, 1024, 0, ReceiveCallback, s);
         }
-        catch(SocketException ex)
+        catch (SocketException ex)
         {
             Debug.Log($"Socket Receive fail {ex.Message}");
         }
@@ -62,7 +62,7 @@ public static class NetManager
     // 发送
     public static void Send(string sendStr)
     {
-        if( socket == null || !socket.Connected) { return; }
+        if (socket == null || !socket.Connected) { return; }
         byte[] sendBytes = System.Text.Encoding.Default.GetBytes(sendStr);
         socket.Send(sendBytes);
     }
@@ -70,7 +70,7 @@ public static class NetManager
     // Update，需要外面调用来驱动
     public static void Update()
     {
-        if(msgList.Count <= 0)
+        if (msgList.Count <= 0)
         {
             return;
         }

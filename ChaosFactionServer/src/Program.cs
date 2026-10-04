@@ -63,7 +63,7 @@ namespace ChaosFaction
                 // 客户端关闭
                 if (count == 0)
                 {
-                    MethodInfo mei = typeof(EventHandler).GetMethod("Disconnect");
+                    MethodInfo mei = typeof(EventHandler).GetMethod("OnDisconnect");
                     object[] ob = { state };
                     mei.Invoke(null, ob);
 
@@ -83,27 +83,20 @@ namespace ChaosFaction
                 object[] o = { state, msgArgs };
                 mi.Invoke(null, o);
 
-                // 广播
-                string sendStr = recvStr;
-                byte[] sendBytes = System.Text.Encoding.Default.GetBytes(sendStr);
-                foreach (ClientState cs in clients.Values)
-                {
-                    cs.socket.Send(sendBytes);
-                }
                 clientfd.BeginReceive(state.readBuff, 0, 1024, 0, ReceiveCallback, state);
             }
             catch (SocketException ex)
             {
-                MethodInfo mei = typeof(EventHandler).GetMethod("Disconnect");
+                MethodInfo mei = typeof(EventHandler).GetMethod("OnDisconnect");
                 object[] ob = { state };
                 mei.Invoke(null, ob);
                 Console.WriteLine($"Socket Receive fail {ex.Message}");
             }
         }
 
-        public static void Send(ClientState sc, string sendStr)
+        public static void Send(ClientState cs, string sendStr)
         {
-            Socket socket = sc.socket;
+            Socket socket = cs.socket;
             if (socket == null || !socket.Connected) { return; }
             byte[] sendBytes = System.Text.Encoding.Default.GetBytes(sendStr);
             socket.Send(sendBytes);

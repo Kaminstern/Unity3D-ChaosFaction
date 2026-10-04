@@ -11,7 +11,7 @@ namespace ChaosFaction
         public static void MsgEnter(ClientState state,string msgArgs)
         {
             // 解析参数
-            string[] split = msgArgs.Split('|');
+            string[] split = msgArgs.Split(',');
             string desc = split[0];
             float x = float.Parse(split[1]);
             float y = float.Parse(split[2]);
@@ -27,7 +27,7 @@ namespace ChaosFaction
             string sendStr = $"Enter|{msgArgs}";
             foreach(ClientState s in MainClass.clients.Values)
             {
-                MainClass.Send(state, sendStr);
+                MainClass.Send(s, sendStr);
             }
             Console.WriteLine($"MsgEnter {msgArgs}");
         }

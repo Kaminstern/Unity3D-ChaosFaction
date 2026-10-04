@@ -13,10 +13,5 @@ namespace ChaosFaction
         {
             Console.WriteLine($"OnDisconnect");
         }
-
-        public static void MsgList(ClientState state, string msgArgs)
-        {
-            Console.WriteLine($"MsgList {msgArgs}");
-        }
     }
 }
